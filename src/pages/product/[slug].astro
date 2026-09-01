@@ -1,0 +1,49 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { allProducts, getProductByUrlSlug } from "../../lib/products";
+
+export function getStaticPaths() {
+  return allProducts.map((product) => ({
+    params: { slug: product.urlSlug },
+  }));
+}
+
+const { slug } = Astro.params;
+const product = getProductByUrlSlug(slug!);
+
+if (!product) {
+  throw new Error(`Product not found for slug: ${slug}`);
+}
+---
+
+<BaseLayout
+  title={`${product.name} — купить`}
+  description={product.shortDescription}
+>
+  <p><a href="/">← Назад в каталог</a></p>
+  <h1>{product.name}</h1>
+  <p>{product.price > 0 ? `${product.price} ₽` : "Цена по запросу"}</p>
+
+  <div>
+    {
+      product.images.map((src) => (
+        <img src={src} alt={product.name} width="300" />
+      ))
+    }
+  </div>
+
+  <p>{product.shortDescription}</p>
+  <p>{product.fullDescription}</p>
+
+  {
+    Object.keys(product.specifications).length > 0 && (
+      <ul>
+        {Object.entries(product.specifications).map(([key, value]) => (
+          <li>
+            {key}: {value}
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</BaseLayout>

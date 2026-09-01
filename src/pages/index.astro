@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { allProducts } from "../lib/products";
+---
+
+<BaseLayout
+  title="Каталог товаров"
+  description="Каталог запчастей и гидравлики для спецтехники."
+>
+  <h1>Каталог товаров</h1>
+  <ul>
+    {
+      allProducts.map((product) => (
+        <li>
+          <a href={`/product/${product.urlSlug}/`}>
+            {product.images[0] && (
+              <img src={product.images[0]} alt={product.name} width="120" />
+            )}
+            <span>{product.name}</span>
+            <span>
+              {product.price > 0 ? `${product.price} ₽` : "Цена по запросу"}
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</BaseLayout>

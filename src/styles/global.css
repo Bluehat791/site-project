@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens from references/design-a.html (dark / engineering-technical
+ * direction). See "Design system" in CLAUDE.md for how these are meant to be
+ * used — do not change these values without updating that section too.
+ */
+@theme {
+  --color-bg: #1b1f22;
+  --color-surface: #22272b;
+  --color-surface-2: #282e32;
+  --color-line: #3a4045;
+  --color-line-strong: #4a90a4;
+  --color-accent: #e8622c;
+  --color-accent-dim: #7a3a1e;
+  --color-text: #edefef;
+  --color-text-muted: #8b9296;
+  --color-stock: #7a9b57;
+
+  --font-display: "Space Grotesk", sans-serif;
+  --font-sans: "IBM Plex Sans", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
