@@ -1,28 +1,94 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ProductCard from "../components/ProductCard.astro";
 import { allProducts } from "../lib/products";
+
+// Filter only makes sense once products actually have distinct categories —
+// ProductList.json currently has one placeholder category for everything
+// (see CLAUDE.md "Known data quirks"), so this renders nothing for now.
+const categories = [...new Set(allProducts.map((product) => product.category))];
+const hasCategoryFilter = categories.length > 1;
 ---
 
 <BaseLayout
   title="Каталог товаров"
   description="Каталог запчастей и гидравлики для спецтехники."
 >
-  <h1>Каталог товаров</h1>
-  <ul>
+  <div class="mx-auto max-w-6xl px-4 py-10 sm:px-8">
+    <h1 class="mb-8 font-display text-3xl font-semibold text-text">
+      Каталог товаров
+    </h1>
+
     {
-      allProducts.map((product) => (
-        <li>
-          <a href={`/product/${product.urlSlug}/`}>
-            {product.images[0] && (
-              <img src={product.images[0]} alt={product.name} width="120" />
-            )}
-            <span>{product.name}</span>
-            <span>
-              {product.price > 0 ? `${product.price} ₽` : "Цена по запросу"}
-            </span>
-          </a>
-        </li>
-      ))
+      hasCategoryFilter && (
+        <div
+          class="mb-8 flex flex-wrap gap-2"
+          data-category-filter
+        >
+          <button
+            type="button"
+            data-category="all"
+            aria-pressed="true"
+            class="border border-line px-4 py-2 font-mono text-xs text-text-muted aria-pressed:border-line-strong aria-pressed:text-text"
+          >
+            Все
+          </button>
+          {categories.map((category) => (
+            <button
+              type="button"
+              data-category={category}
+              aria-pressed="false"
+              class="border border-line px-4 py-2 font-mono text-xs text-text-muted aria-pressed:border-line-strong aria-pressed:text-text"
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      )
     }
-  </ul>
+
+    <div
+      class="grid grid-cols-1 gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-3"
+      data-product-grid
+    >
+      {
+        allProducts.map((product) => (
+          <div data-category={product.category}>
+            <ProductCard product={product} />
+          </div>
+        ))
+      }
+    </div>
+  </div>
 </BaseLayout>
+
+{
+  hasCategoryFilter && (
+    <script>
+      const filterBar = document.querySelector("[data-category-filter]");
+      const grid = document.querySelector("[data-product-grid]");
+
+      if (filterBar && grid) {
+        const buttons = filterBar.querySelectorAll("button[data-category]");
+        const items = grid.querySelectorAll<HTMLElement>("[data-category]");
+
+        filterBar.addEventListener("click", (event) => {
+          const button = (event.target as HTMLElement).closest(
+            "button[data-category]",
+          );
+          if (!button) return;
+
+          const selected = button.getAttribute("data-category");
+          buttons.forEach((b) =>
+            b.setAttribute("aria-pressed", String(b === button)),
+          );
+          items.forEach((item) => {
+            const match =
+              selected === "all" || item.getAttribute("data-category") === selected;
+            item.style.display = match ? "" : "none";
+          });
+        });
+      }
+    </script>
+  )
+}

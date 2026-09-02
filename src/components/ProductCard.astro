@@ -1,0 +1,48 @@
+---
+import type { ProductWithUrlSlug } from "../lib/products";
+
+interface Props {
+  product: ProductWithUrlSlug;
+}
+
+const { product } = Astro.props;
+const cover = product.images[0];
+---
+
+<a
+  href={`/product/${product.urlSlug}/`}
+  class="group relative flex h-full flex-col bg-surface p-6
+    before:pointer-events-none before:absolute before:left-[10px] before:top-[10px] before:h-[10px] before:w-[10px] before:border-l before:border-t before:border-line-strong before:content-['']
+    after:pointer-events-none after:absolute after:bottom-[10px] after:right-[10px] after:h-[10px] after:w-[10px] after:border-b after:border-r after:border-line-strong after:content-['']"
+>
+  {
+    cover && (
+      <img
+        src={cover}
+        alt={product.name}
+        loading="lazy"
+        class="mb-4 aspect-[4/3] w-full bg-surface-2 object-cover"
+      />
+    )
+  }
+
+  <div class="mb-2.5 font-mono text-[11px] text-line-strong">
+    {product.category}
+  </div>
+
+  <h3 class="mb-3.5 min-h-[46px] font-display text-[17px] font-medium leading-[1.35] text-text">
+    {product.name}
+  </h3>
+
+  <p class="mb-4 line-clamp-3 text-sm text-text-muted">
+    {product.shortDescription}
+  </p>
+
+  <div class="mt-auto pt-4 font-mono text-xl font-medium text-text">
+    {
+      product.price > 0
+        ? `${product.price.toLocaleString("ru-RU")} ₽`
+        : "Цена по запросу"
+    }
+  </div>
+</a>
