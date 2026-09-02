@@ -7,6 +7,7 @@ interface Props {
 
 const { product } = Astro.props;
 const cover = product.images[0];
+const hasMultipleImages = product.images.length > 1;
 ---
 
 <a
@@ -17,12 +18,45 @@ const cover = product.images[0];
 >
   {
     cover && (
-      <img
-        src={cover}
-        alt={product.name}
-        loading="lazy"
-        class="mb-4 aspect-[4/3] w-full bg-surface-2 object-cover"
-      />
+      <div
+        class="relative mb-4 aspect-[4/3] w-full overflow-hidden bg-surface-2"
+        data-image-slider
+        data-images={hasMultipleImages ? JSON.stringify(product.images) : undefined}
+      >
+        <img
+          src={cover}
+          alt={product.name}
+          loading="lazy"
+          data-slider-img
+          class="h-full w-full object-cover"
+        />
+        {
+          hasMultipleImages && (
+            <Fragment>
+              <button
+                type="button"
+                data-dir="prev"
+                aria-label="Предыдущее фото"
+                class="slider-arrow absolute left-1 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center border border-line-strong bg-bg/80 text-text"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                data-dir="next"
+                aria-label="Следующее фото"
+                class="slider-arrow absolute right-1 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center border border-line-strong bg-bg/80 text-text"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+            </Fragment>
+          )
+        }
+      </div>
     )
   }
 
@@ -46,3 +80,69 @@ const cover = product.images[0];
     }
   </div>
 </a>
+
+<style>
+  .slider-arrow {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+
+  [data-image-slider]:hover .slider-arrow,
+  [data-image-slider]:focus-within .slider-arrow,
+  [data-image-slider].is-active .slider-arrow {
+    opacity: 1;
+    pointer-events: auto;
+  }
+</style>
+
+<script>
+  function setupSlider(slider: HTMLElement) {
+    const raw = slider.dataset.images;
+    if (!raw) return;
+
+    let images: string[];
+    try {
+      images = JSON.parse(raw);
+    } catch {
+      return;
+    }
+    if (images.length <= 1) return;
+
+    const img = slider.querySelector<HTMLImageElement>("[data-slider-img]");
+    if (!img) return;
+
+    let index = 0;
+    const show = (next: number) => {
+      index = (next + images.length) % images.length;
+      img.src = images[index];
+    };
+
+    slider.querySelectorAll<HTMLButtonElement>("button[data-dir]").forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        show(index + (button.dataset.dir === "next" ? 1 : -1));
+      });
+    });
+
+    const canHover = window.matchMedia("(hover: hover)").matches;
+    if (!canHover) {
+      slider.addEventListener(
+        "click",
+        (event) => {
+          if (!slider.classList.contains("is-active")) {
+            event.preventDefault();
+            event.stopPropagation();
+            slider.classList.add("is-active");
+          }
+        },
+        { capture: true },
+      );
+    }
+  }
+
+  document
+    .querySelectorAll<HTMLElement>("[data-image-slider]")
+    .forEach(setupSlider);
+</script>

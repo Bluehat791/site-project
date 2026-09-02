@@ -125,21 +125,6 @@
       ]
     },
     {
-      "id": "008",
-      "slug": "Key for car",
-      "name": "Ключ для снятия колец грузовых колес",
-      "category": "Категория",
-      "price": 5000,
-      "currency": "RUB",
-      "inStock": true,
-      "shortDescription": " для снятия колец грузовых колес",
-      "fullDescription": "Ключ для снятия колец грузовых колес MS7020 предназначен для снятия ободов колец камерных дисков",
-      "specifications": {},
-      "images": [
-        "/images/2-1.webp"
-      ]
-    },
-    {
       "id": "009",
       "slug": "NH Hydro",
       "name": "Гидронасос шестеренный нш",
@@ -188,21 +173,6 @@
         "/images/11-1.webp",
         "/images/11-2.webp",
         "/images/11-3.webp"
-      ]
-    },
-    {
-      "id": "012",
-      "slug": "Key for car",
-      "name": "Ключ для снятия колец грузовых колес",
-      "category": "Категория",
-      "price": 5000,
-      "currency": "RUB",
-      "inStock": true,
-      "shortDescription": " для снятия колец грузовых колес",
-      "fullDescription": "Ключ для снятия колец грузовых колес MS7020 предназначен для снятия ободов колец камерных дисков",
-      "specifications": {},
-      "images": [
-        "/images/2-1.webp"
       ]
     },
     {
@@ -659,21 +629,6 @@
       "images": [
         "/images/39-1.webp",
         "/images/39-2.webp"
-      ]
-    },
-    {
-      "id": "040",
-      "slug": "Key for car",
-      "name": "Ключ для снятия колец грузовых колес",
-      "category": "Категория",
-      "price": 5000,
-      "currency": "RUB",
-      "inStock": true,
-      "shortDescription": " для снятия колец грузовых колес",
-      "fullDescription": "Ключ для снятия колец грузовых колес MS7020 предназначен для снятия ободов колец камерных дисков",
-      "specifications": {},
-      "images": [
-        "/images/2-1.webp"
       ]
     },
     {

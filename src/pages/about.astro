@@ -1,0 +1,53 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { TELEGRAM_URL, PHONE_DISPLAY, PHONE_TEL } from "../lib/contacts";
+---
+
+<BaseLayout
+  title="О нас — Юггидросоюз"
+  description="Юггидросоюз — поставщик запчастей и гидравлики для спецтехники. Работаем через Telegram и телефон, без интернет-магазина и онлайн-оплаты."
+>
+  <div class="mx-auto max-w-3xl px-4 py-10 sm:px-8">
+    <nav aria-label="Хлебные крошки" class="mb-6 flex items-center gap-2 font-mono text-xs text-text-muted">
+      <a href="/" class="hover:text-text">Главная</a>
+      <span aria-hidden="true">→</span>
+      <span class="text-text">О нас</span>
+    </nav>
+
+    <h1 class="mb-6 font-display text-3xl font-semibold text-text">О нас</h1>
+
+    <div class="space-y-5 text-sm leading-relaxed text-text-muted sm:text-base">
+      <p>
+        Юггидросоюз занимается поставкой запчастей и гидравлического оборудования
+        для грузовой и специальной техники: гидронасосы, КПП, валы отбора мощности,
+        джойстики управления, переходники и сопутствующие узлы.
+      </p>
+      <p>
+        Мы работаем без интернет-магазина, корзины и онлайн-оплаты — этот сайт
+        служит каталогом ассортимента. Все вопросы по наличию, цене и заказу
+        обсуждаются напрямую с менеджером через Telegram или по телефону.
+      </p>
+      <p>
+        Актуальность позиции, сроки поставки и итоговую стоимость уточняйте перед
+        заказом — часть товаров привозится под заказ.
+      </p>
+    </div>
+
+    <div class="mt-10 flex flex-wrap gap-3">
+      <a
+        href={TELEGRAM_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center gap-2 bg-accent px-5 py-3 text-sm font-medium text-bg"
+      >
+        Написать в Telegram
+      </a>
+      <a
+        href={`tel:${PHONE_TEL}`}
+        class="flex items-center gap-2 border border-line-strong px-5 py-3 font-mono text-sm text-text hover:text-accent"
+      >
+        {PHONE_DISPLAY}
+      </a>
+    </div>
+  </div>
+</BaseLayout>

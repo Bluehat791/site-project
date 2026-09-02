@@ -8,6 +8,9 @@ import { allProducts } from "../lib/products";
 // (see CLAUDE.md "Known data quirks"), so this renders nothing for now.
 const categories = [...new Set(allProducts.map((product) => product.category))];
 const hasCategoryFilter = categories.length > 1;
+
+const INITIAL_VISIBLE = 6;
+const hasMore = allProducts.length > INITIAL_VISIBLE;
 ---
 
 <BaseLayout
@@ -52,15 +55,51 @@ const hasCategoryFilter = categories.length > 1;
       data-product-grid
     >
       {
-        allProducts.map((product) => (
-          <div data-category={product.category}>
+        allProducts.map((product, index) => (
+          <div
+            data-category={product.category}
+            data-product-index={index}
+            class={index >= INITIAL_VISIBLE ? "hidden" : ""}
+          >
             <ProductCard product={product} />
           </div>
         ))
       }
     </div>
+
+    {
+      hasMore && (
+        <div class="mt-8 flex justify-center">
+          <button
+            type="button"
+            data-show-more
+            class="border border-line-strong px-6 py-3 font-mono text-xs uppercase tracking-wide text-text hover:bg-surface"
+          >
+            Показать ещё
+          </button>
+        </div>
+      )
+    }
   </div>
 </BaseLayout>
+
+{
+  hasMore && (
+    <script>
+      const button = document.querySelector<HTMLButtonElement>("[data-show-more]");
+      const grid = document.querySelector("[data-product-grid]");
+
+      if (button && grid) {
+        button.addEventListener("click", () => {
+          grid.querySelectorAll<HTMLElement>(".hidden[data-product-index]").forEach((item) => {
+            item.classList.remove("hidden");
+          });
+          button.remove();
+        });
+      }
+    </script>
+  )
+}
 
 {
   hasCategoryFilter && (
