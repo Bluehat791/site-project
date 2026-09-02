@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ProductCard from "../components/ProductCard.astro";
+import GallerySection from "../components/GallerySection.astro";
 import { allProducts } from "../lib/products";
 
 // Filter only makes sense once products actually have distinct categories —
@@ -81,6 +82,8 @@ const hasMore = allProducts.length > INITIAL_VISIBLE;
       )
     }
   </div>
+
+  <GallerySection />
 </BaseLayout>
 
 {

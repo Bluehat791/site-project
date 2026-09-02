@@ -1,0 +1,178 @@
+---
+const GALLERY_COUNT = 15;
+const INITIAL_VISIBLE = 9;
+const images = Array.from({ length: GALLERY_COUNT }, (_, i) => `/images/us-${i + 1}.webp`);
+const hasMore = images.length > INITIAL_VISIBLE;
+
+// Bento pattern: cycles through a few cell sizes so the grid isn't a wall of
+// identical squares. grid-flow-dense (below) packs around the bigger cells.
+const SPAN_PATTERN = [
+  "col-span-2 row-span-2",
+  "col-span-1 row-span-1",
+  "col-span-1 row-span-1",
+  "col-span-1 row-span-2",
+  "col-span-1 row-span-1",
+  "col-span-2 row-span-1",
+  "col-span-1 row-span-1",
+];
+---
+
+<div class="mx-auto max-w-6xl px-4 pb-16 sm:px-8">
+  <div class="mb-8 flex items-center gap-3">
+    <span class="font-mono text-xs uppercase tracking-wide text-text-muted">
+      наша галерея
+    </span>
+    <span class="h-px flex-1 bg-line"></span>
+  </div>
+
+  <div
+    class="grid grid-flow-dense grid-cols-2 auto-rows-[130px] gap-2 sm:grid-cols-3 sm:auto-rows-[160px] lg:grid-cols-4 lg:auto-rows-[190px]"
+    data-gallery-grid
+    data-images={JSON.stringify(images)}
+  >
+    {
+      images.map((src, i) => (
+        <button
+          type="button"
+          data-gallery-open
+          data-index={i}
+          aria-label={`Открыть фото ${i + 1} из галереи`}
+          class={`group relative overflow-hidden bg-surface-2 ${SPAN_PATTERN[i % SPAN_PATTERN.length]} ${i >= INITIAL_VISIBLE ? "hidden" : ""}`}
+        >
+          <img
+            src={src}
+            alt={`Наш магазин — фото ${i + 1}`}
+            loading="lazy"
+            class="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+          />
+          <div class="pointer-events-none absolute inset-0 bg-bg/0 transition-colors duration-200 group-hover:bg-bg/20" />
+        </button>
+      ))
+    }
+  </div>
+
+  {
+    hasMore && (
+      <div class="mt-6 flex justify-center">
+        <button
+          type="button"
+          data-gallery-show-more
+          class="border border-line-strong px-6 py-3 font-mono text-xs uppercase tracking-wide text-text hover:bg-surface"
+        >
+          Показать все фото
+        </button>
+      </div>
+    )
+  }
+</div>
+
+<div
+  data-lightbox
+  role="dialog"
+  aria-modal="true"
+  aria-label="Просмотр фото галереи"
+  class="fixed inset-0 z-[80] hidden bg-bg"
+>
+  <button
+    type="button"
+    data-lightbox-close
+    aria-label="Закрыть"
+    class="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center border border-line-strong bg-bg text-text hover:text-accent"
+  >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round" />
+    </svg>
+  </button>
+
+  <button
+    type="button"
+    data-lightbox-prev
+    aria-label="Предыдущее фото"
+    class="absolute left-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center border border-line-strong bg-bg text-text hover:text-accent sm:left-6"
+  >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </button>
+
+  <div class="flex h-full w-full items-center justify-center p-4 sm:p-10">
+    <img
+      data-lightbox-img
+      src=""
+      alt="Фото галереи"
+      class="max-h-full max-w-full object-contain"
+    />
+  </div>
+
+  <button
+    type="button"
+    data-lightbox-next
+    aria-label="Следующее фото"
+    class="absolute right-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center border border-line-strong bg-bg text-text hover:text-accent sm:right-6"
+  >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </button>
+</div>
+
+<script>
+  const grid = document.querySelector<HTMLElement>("[data-gallery-grid]");
+  const showMoreBtn = document.querySelector<HTMLButtonElement>("[data-gallery-show-more]");
+  const lightbox = document.querySelector<HTMLElement>("[data-lightbox]");
+  const lightboxImg = document.querySelector<HTMLImageElement>("[data-lightbox-img]");
+  const closeBtn = document.querySelector<HTMLButtonElement>("[data-lightbox-close]");
+  const prevBtn = document.querySelector<HTMLButtonElement>("[data-lightbox-prev]");
+  const nextBtn = document.querySelector<HTMLButtonElement>("[data-lightbox-next]");
+
+  if (showMoreBtn && grid) {
+    showMoreBtn.addEventListener("click", () => {
+      grid.querySelectorAll<HTMLElement>(".hidden[data-gallery-open]").forEach((item) => {
+        item.classList.remove("hidden");
+      });
+      showMoreBtn.remove();
+    });
+  }
+
+  if (grid && lightbox && lightboxImg && closeBtn && prevBtn && nextBtn) {
+    const images: string[] = JSON.parse(grid.dataset.images || "[]");
+    let current = 0;
+
+    const show = (next: number) => {
+      current = (next + images.length) % images.length;
+      lightboxImg.src = images[current];
+    };
+
+    const openLightbox = (index: number) => {
+      show(index);
+      lightbox.classList.remove("hidden");
+      document.body.classList.add("overflow-hidden");
+    };
+
+    const closeLightbox = () => {
+      lightbox.classList.add("hidden");
+      document.body.classList.remove("overflow-hidden");
+    };
+
+    grid.querySelectorAll<HTMLButtonElement>("[data-gallery-open]").forEach((button) => {
+      button.addEventListener("click", () => {
+        openLightbox(Number(button.dataset.index));
+      });
+    });
+
+    closeBtn.addEventListener("click", closeLightbox);
+    prevBtn.addEventListener("click", () => show(current - 1));
+    nextBtn.addEventListener("click", () => show(current + 1));
+
+    lightbox.addEventListener("click", (event) => {
+      if (event.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (lightbox.classList.contains("hidden")) return;
+      if (event.key === "Escape") closeLightbox();
+      if (event.key === "ArrowLeft") show(current - 1);
+      if (event.key === "ArrowRight") show(current + 1);
+    });
+  }
+</script>
