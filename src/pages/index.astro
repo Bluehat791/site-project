@@ -75,6 +75,7 @@ const hasMore = allProducts.length > INITIAL_VISIBLE;
           <button
             type="button"
             data-show-more
+            data-expanded="false"
             class="border border-line-strong px-6 py-3 font-mono text-xs uppercase tracking-wide text-text hover:bg-surface"
           >
             Показать ещё
@@ -95,11 +96,28 @@ const hasMore = allProducts.length > INITIAL_VISIBLE;
       const grid = document.querySelector("[data-product-grid]");
 
       if (button && grid) {
+        const INITIAL_VISIBLE = 6;
+
         button.addEventListener("click", () => {
-          grid.querySelectorAll<HTMLElement>(".hidden[data-product-index]").forEach((item) => {
-            item.classList.remove("hidden");
+          const isExpanded = button.dataset.expanded === "true";
+          const items = grid.querySelectorAll<HTMLElement>("[data-product-index]");
+
+          items.forEach((item, index) => {
+            if (isExpanded) {
+              // Collapse: hide items beyond initial count
+              if (index >= INITIAL_VISIBLE) {
+                item.classList.add("hidden");
+              }
+            } else {
+              // Expand: show all items
+              item.classList.remove("hidden");
+            }
           });
-          button.remove();
+
+          // Toggle state
+          const newExpanded = !isExpanded;
+          button.dataset.expanded = String(newExpanded);
+          button.textContent = newExpanded ? "Свернуть" : "Показать ещё";
         });
       }
     </script>

@@ -57,6 +57,7 @@ const SPAN_PATTERN = [
         <button
           type="button"
           data-gallery-show-more
+          data-expanded="false"
           class="border border-line-strong px-6 py-3 font-mono text-xs uppercase tracking-wide text-text hover:bg-surface"
         >
           Показать все фото
@@ -126,11 +127,28 @@ const SPAN_PATTERN = [
   const nextBtn = document.querySelector<HTMLButtonElement>("[data-lightbox-next]");
 
   if (showMoreBtn && grid) {
+    const INITIAL_VISIBLE = 9;
+
     showMoreBtn.addEventListener("click", () => {
-      grid.querySelectorAll<HTMLElement>(".hidden[data-gallery-open]").forEach((item) => {
-        item.classList.remove("hidden");
+      const isExpanded = showMoreBtn.dataset.expanded === "true";
+      const items = grid.querySelectorAll<HTMLElement>("[data-gallery-open]");
+
+      items.forEach((item, index) => {
+        if (isExpanded) {
+          // Collapse: hide items beyond initial count
+          if (index >= INITIAL_VISIBLE) {
+            item.classList.add("hidden");
+          }
+        } else {
+          // Expand: show all items
+          item.classList.remove("hidden");
+        }
       });
-      showMoreBtn.remove();
+
+      // Toggle state
+      const newExpanded = !isExpanded;
+      showMoreBtn.dataset.expanded = String(newExpanded);
+      showMoreBtn.textContent = newExpanded ? "Свернуть галерею" : "Показать все фото";
     });
   }
 
