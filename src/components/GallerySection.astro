@@ -1,20 +1,8 @@
 ---
 const GALLERY_COUNT = 15;
-const INITIAL_VISIBLE = 9;
+const INITIAL_VISIBLE = 6;
 const images = Array.from({ length: GALLERY_COUNT }, (_, i) => `/images/us-${i + 1}.webp`);
 const hasMore = images.length > INITIAL_VISIBLE;
-
-// Bento pattern: cycles through a few cell sizes so the grid isn't a wall of
-// identical squares. grid-flow-dense (below) packs around the bigger cells.
-const SPAN_PATTERN = [
-  "col-span-2 row-span-2",
-  "col-span-1 row-span-1",
-  "col-span-1 row-span-1",
-  "col-span-1 row-span-2",
-  "col-span-1 row-span-1",
-  "col-span-2 row-span-1",
-  "col-span-1 row-span-1",
-];
 ---
 
 <div class="mx-auto max-w-6xl px-4 pb-16 sm:px-8">
@@ -26,7 +14,7 @@ const SPAN_PATTERN = [
   </div>
 
   <div
-    class="grid grid-flow-dense grid-cols-2 auto-rows-[130px] gap-2 sm:grid-cols-3 sm:auto-rows-[160px] lg:grid-cols-4 lg:auto-rows-[190px]"
+    class="grid grid-cols-2 gap-4 md:grid-cols-3"
     data-gallery-grid
     data-images={JSON.stringify(images)}
   >
@@ -37,7 +25,7 @@ const SPAN_PATTERN = [
           data-gallery-open
           data-index={i}
           aria-label={`Открыть фото ${i + 1} из галереи`}
-          class={`group relative overflow-hidden bg-surface-2 ${SPAN_PATTERN[i % SPAN_PATTERN.length]} ${i >= INITIAL_VISIBLE ? "hidden" : ""}`}
+          class={`group relative aspect-square overflow-hidden border border-line bg-surface-2 ${i >= INITIAL_VISIBLE ? "hidden" : ""}`}
         >
           <img
             src={src}
@@ -45,7 +33,22 @@ const SPAN_PATTERN = [
             loading="lazy"
             class="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
           />
-          <div class="pointer-events-none absolute inset-0 bg-bg/0 transition-colors duration-200 group-hover:bg-bg/20" />
+          <div class="pointer-events-none absolute inset-0 flex items-center justify-center bg-bg/0 transition-colors duration-200 group-hover:bg-bg/50">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="text-text opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+              aria-hidden="true"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <path d="M21 21l-4.3-4.3" stroke-linecap="round" />
+              <path d="M11 8v6M8 11h6" stroke-linecap="round" />
+            </svg>
+          </div>
         </button>
       ))
     }
@@ -127,7 +130,7 @@ const SPAN_PATTERN = [
   const nextBtn = document.querySelector<HTMLButtonElement>("[data-lightbox-next]");
 
   if (showMoreBtn && grid) {
-    const INITIAL_VISIBLE = 9;
+    const INITIAL_VISIBLE = 6;
 
     showMoreBtn.addEventListener("click", () => {
       const isExpanded = showMoreBtn.dataset.expanded === "true";
@@ -192,5 +195,30 @@ const SPAN_PATTERN = [
       if (event.key === "ArrowLeft") show(current - 1);
       if (event.key === "ArrowRight") show(current + 1);
     });
+
+    // Touch swipe navigation for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    lightbox.addEventListener(
+      "touchstart",
+      (event) => {
+        touchStartX = event.changedTouches[0].screenX;
+      },
+      { passive: true },
+    );
+
+    lightbox.addEventListener(
+      "touchend",
+      (event) => {
+        touchEndX = event.changedTouches[0].screenX;
+        const delta = touchEndX - touchStartX;
+        const SWIPE_THRESHOLD = 40;
+        if (Math.abs(delta) < SWIPE_THRESHOLD) return;
+        if (delta < 0) show(current + 1);
+        else show(current - 1);
+      },
+      { passive: true },
+    );
   }
 </script>
