@@ -17,6 +17,14 @@
   --color-text-muted: #8b9296;
   --color-stock: #7a9b57;
 
+  /* Home-page section bands ("sheets") — each block gets its own dark tint
+     plus a key color for its sheet number / rule. Key colors reuse accent,
+     line-strong and stock; sand is the only extra hue. */
+  --color-band-warm: #221d1a;
+  --color-band-steel: #19232a;
+  --color-band-moss: #1d221c;
+  --color-sand: #c8a36a;
+
   --font-display: "Space Grotesk", sans-serif;
   --font-sans: "IBM Plex Sans", sans-serif;
   --font-mono: "IBM Plex Mono", monospace;

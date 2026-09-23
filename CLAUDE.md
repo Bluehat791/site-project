@@ -101,6 +101,12 @@ Defined as Tailwind v4 theme colors in `src/styles/global.css` (`@theme` block �
 | `text` | `#EDEFEF` | `text-text` | primary text |
 | `text-muted` | `#8B9296` | `text-text-muted` | secondary text, labels, meta |
 | `stock` | `#7A9B57` | `text-stock` | in-stock / success indicator |
+| `band-warm` | `#221D1A` | `bg-band-warm` | home section band — gallery (key: `sand`) |
+| `band-steel` | `#19232A` | `bg-band-steel` | home section band — map (key: `line-strong`) |
+| `band-moss` | `#1D221C` | `bg-band-moss` | home section band — reviews (key: `stock`) |
+| `sand` | `#C8A36A` | `text-sand` / `bg-sand` | key color of the gallery band only |
+
+Home-page blocks are wrapped in `src/components/Section.astro` ("drawing sheet": full-width tinted band + faint grid, `01 / 04` sheet number and dimension-line rule in the band's key color). The catalog band uses `bg` with `accent` as its key. Add new home blocks through `Section` with a `tone` rather than hand-rolling a label divider.
 
 ### Fonts
 

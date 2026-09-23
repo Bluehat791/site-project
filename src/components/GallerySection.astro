@@ -5,14 +5,7 @@ const images = Array.from({ length: GALLERY_COUNT }, (_, i) => `/images/us-${i +
 const hasMore = images.length > INITIAL_VISIBLE;
 ---
 
-<div class="mx-auto max-w-6xl px-4 pb-16 sm:px-8">
-  <div class="mb-8 flex items-center gap-3">
-    <span class="font-mono text-xs uppercase tracking-wide text-text-muted">
-      наша галерея
-    </span>
-    <span class="h-px flex-1 bg-line"></span>
-  </div>
-
+<div>
   <div
     class="grid grid-cols-2 gap-4 md:grid-cols-3"
     data-gallery-grid

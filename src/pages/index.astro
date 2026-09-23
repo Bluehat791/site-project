@@ -4,6 +4,7 @@ import ProductCard from "../components/ProductCard.astro";
 import GallerySection from "../components/GallerySection.astro";
 import MapSection from "../components/MapSection.astro";
 import ReviewsSection from "../components/ReviewsSection.astro";
+import Section from "../components/Section.astro";
 import { allProducts } from "../lib/products";
 
 // Filter only makes sense once products actually have distinct categories —
@@ -13,17 +14,25 @@ const categories = [...new Set(allProducts.map((product) => product.category))];
 const hasCategoryFilter = categories.length > 1;
 
 const INITIAL_VISIBLE = 6;
+const PAGE_SIZE = 9;
 const hasMore = allProducts.length > INITIAL_VISIBLE;
+
+const SECTION_COUNT = 4;
 ---
 
 <BaseLayout
   title="Каталог товаров"
   description="Каталог запчастей и гидравлики для спецтехники."
 >
-  <div class="mx-auto max-w-6xl px-4 py-10 sm:px-8">
-    <h1 class="mb-8 font-display text-3xl font-semibold text-text">
-      Каталог товаров
-    </h1>
+  <Section
+    id="catalog"
+    as="h1"
+    title="Каталог товаров"
+    index={1}
+    total={SECTION_COUNT}
+    tone="base"
+    meta={`позиций · ${allProducts.length}`}
+  >
 
     {
       hasCategoryFilter && (
@@ -72,55 +81,95 @@ const hasMore = allProducts.length > INITIAL_VISIBLE;
 
     {
       hasMore && (
-        <div class="mt-8 flex justify-center">
-          <button
-            type="button"
-            data-show-more
-            data-expanded="false"
-            class="border border-line-strong px-6 py-3 font-mono text-xs uppercase tracking-wide text-text hover:bg-surface"
-          >
-            Показать ещё
-          </button>
+        <div
+          class="mt-8 flex flex-col items-center gap-3"
+          data-catalog-controls
+          data-initial={INITIAL_VISIBLE}
+          data-page-size={PAGE_SIZE}
+        >
+          <div class="flex flex-wrap justify-center gap-3">
+            <button
+              type="button"
+              data-show-more
+              class="border border-line-strong px-6 py-3 font-mono text-xs uppercase tracking-wide text-text hover:bg-surface"
+            >
+              Показать ещё
+            </button>
+            <button
+              type="button"
+              data-collapse
+              class="hidden border border-line px-6 py-3 font-mono text-xs uppercase tracking-wide text-text-muted hover:border-line-strong hover:text-text"
+            >
+              Свернуть
+            </button>
+          </div>
+          <span
+            data-catalog-counter
+            aria-live="polite"
+            class="font-mono text-[11px] text-text-muted"
+          ></span>
         </div>
       )
     }
-  </div>
+  </Section>
 
-  <GallerySection />
-  <MapSection />
-  <ReviewsSection />
+  <Section id="gallery" title="Наша галерея" index={2} total={SECTION_COUNT} tone="warm" meta="склад и витрина">
+    <GallerySection />
+  </Section>
+
+  <Section id="map" title="Мы на карте" index={3} total={SECTION_COUNT} tone="steel" meta="как добраться">
+    <MapSection />
+  </Section>
+
+  <Section id="reviews" title="Отзывы" index={4} total={SECTION_COUNT} tone="moss" meta="яндекс.карты">
+    <ReviewsSection />
+  </Section>
 </BaseLayout>
 
 {
   hasMore && (
     <script>
-      const button = document.querySelector<HTMLButtonElement>("[data-show-more]");
+      const controls = document.querySelector<HTMLElement>("[data-catalog-controls]");
       const grid = document.querySelector("[data-product-grid]");
+      const moreBtn = controls?.querySelector<HTMLButtonElement>("[data-show-more]");
+      const collapseBtn = controls?.querySelector<HTMLButtonElement>("[data-collapse]");
+      const counter = controls?.querySelector<HTMLElement>("[data-catalog-counter]");
 
-      if (button && grid) {
-        const INITIAL_VISIBLE = 6;
+      if (controls && grid && moreBtn && collapseBtn && counter) {
+        const initial = Number(controls.dataset.initial);
+        const pageSize = Number(controls.dataset.pageSize);
+        const items = grid.querySelectorAll<HTMLElement>("[data-product-index]");
+        const total = items.length;
+        let visible = initial;
 
-        button.addEventListener("click", () => {
-          const isExpanded = button.dataset.expanded === "true";
-          const items = grid.querySelectorAll<HTMLElement>("[data-product-index]");
-
+        const render = () => {
           items.forEach((item, index) => {
-            if (isExpanded) {
-              // Collapse: hide items beyond initial count
-              if (index >= INITIAL_VISIBLE) {
-                item.classList.add("hidden");
-              }
-            } else {
-              // Expand: show all items
-              item.classList.remove("hidden");
-            }
+            item.classList.toggle("hidden", index >= visible);
           });
 
-          // Toggle state
-          const newExpanded = !isExpanded;
-          button.dataset.expanded = String(newExpanded);
-          button.textContent = newExpanded ? "Свернуть" : "Показать ещё";
+          const remaining = total - visible;
+          moreBtn.classList.toggle("hidden", remaining <= 0);
+          moreBtn.textContent = `Показать ещё ${Math.min(pageSize, remaining)}`;
+          collapseBtn.classList.toggle("hidden", visible <= initial);
+          counter.textContent = `показано ${Math.min(visible, total)} из ${total}`;
+        };
+
+        moreBtn.addEventListener("click", () => {
+          const firstNew = items[visible];
+          visible = Math.min(visible + pageSize, total);
+          render();
+          // Move focus to the first newly revealed card so keyboard users continue from there.
+          firstNew?.querySelector<HTMLElement>("a")?.focus({ preventScroll: true });
         });
+
+        collapseBtn.addEventListener("click", () => {
+          visible = initial;
+          render();
+          // The list may have been very long — jump back to the top of the catalog.
+          document.getElementById("catalog")?.scrollIntoView({ behavior: "smooth" });
+        });
+
+        render();
       }
     </script>
   )
