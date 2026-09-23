@@ -1,0 +1,35 @@
+---
+// Neutral stand-in for a review author's avatar — we don't publish people's
+// real profile photos. Square (no border-radius, per the design system), with
+// an optional Yandex.Maps pin badge marking where the review came from.
+
+interface Props {
+  size?: "md" | "lg";
+  showSource?: boolean;
+}
+
+const { size = "md", showSource = true } = Astro.props;
+
+const frame = size === "lg" ? "h-14 w-14" : "h-10 w-10";
+const badge = size === "lg" ? "h-5 w-5 -bottom-2 -right-2" : "h-4 w-4 -bottom-1.5 -right-1.5";
+---
+
+<span class={`relative inline-flex flex-none ${frame}`} aria-hidden="true">
+  <span class="flex h-full w-full items-end justify-center overflow-hidden border border-line bg-surface-2 text-text-muted">
+    <svg viewBox="0 0 40 40" fill="currentColor" class="h-[88%] w-[88%]">
+      <circle cx="20" cy="14" r="7.5" />
+      <path d="M5 40c0-8.6 6.7-14 15-14s15 5.4 15 14z" />
+    </svg>
+  </span>
+  {
+    showSource && (
+      <img
+        src="/images/yandex-maps-pin.webp"
+        alt=""
+        width="16"
+        height="16"
+        class={`absolute ${badge}`}
+      />
+    )
+  }
+</span>

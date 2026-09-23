@@ -32,6 +32,7 @@ This file has previously contained hand-edited syntax errors (trailing commas, u
 - **`src/pages/index.astro`** — the catalog (home page), lists all products from `allProducts`.
 - **`src/pages/product/[slug].astro`** — one static page per product (`getStaticPaths` maps over `allProducts`, keyed by `urlSlug`), each with its own `<title>` and meta description built from the product's name/shortDescription (per the SEO requirement below).
 - **`src/pages/contacts.astro`** — static contacts page.
+- **`src/lib/reviews.ts`** — customer reviews as text (transcribed from the Yandex.Maps screenshots in `references/review-*.png`), rendered by `ReviewCard.astro`. Reviews are deliberately **not** shown as screenshots: the originals are low-res and contain authors' real profile photos. `ReviewAvatar.astro` is the neutral stand-in avatar (+ Yandex.Maps pin badge `public/images/yandex-maps-pin.webp`) — never publish real reviewer avatars.
 - **`src/layouts/BaseLayout.astro`** — shared `<html>`/nav/`<head>` shell (title + description props); all pages should go through it.
 - **`public/images/`** — product photos, served as-is at `/images/...`. `ProductList.json`'s `images` arrays reference them by that path — see naming convention below.
 
@@ -104,7 +105,7 @@ Defined as Tailwind v4 theme colors in `src/styles/global.css` (`@theme` block �
 | `band-warm` | `#221D1A` | `bg-band-warm` | home section band — gallery (key: `sand`) |
 | `band-steel` | `#19232A` | `bg-band-steel` | home section band — map (key: `line-strong`) |
 | `band-moss` | `#1D221C` | `bg-band-moss` | home section band — reviews (key: `stock`) |
-| `sand` | `#C8A36A` | `text-sand` / `bg-sand` | key color of the gallery band only |
+| `sand` | `#C8A36A` | `text-sand` / `bg-sand` | key color of the gallery band; rating stars in reviews |
 
 Home-page blocks are wrapped in `src/components/Section.astro` ("drawing sheet": full-width tinted band + faint grid, `01 / 04` sheet number and dimension-line rule in the band's key color). The catalog band uses `bg` with `accent` as its key. Add new home blocks through `Section` with a `tone` rather than hand-rolling a label divider.
 
