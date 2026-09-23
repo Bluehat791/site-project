@@ -1,0 +1,30 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Страница не найдена" description="Запрашиваемая страница не найдена.">
+  <div class="mx-auto flex min-h-[70vh] max-w-3xl flex-col items-center justify-center px-4 py-10 text-center sm:px-8">
+    <p class="font-mono text-6xl font-medium text-accent sm:text-8xl">404</p>
+    <h1 class="mt-4 font-display text-2xl font-semibold text-text sm:text-3xl">
+      Страница не найдена
+    </h1>
+    <p class="mt-3 max-w-md text-sm leading-relaxed text-text-muted sm:text-base">
+      Такой страницы не существует или она была перемещена. Проверьте адрес
+      или воспользуйтесь ссылками ниже.
+    </p>
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-px border border-line bg-line">
+      <a
+        href="/"
+        class="border-line-strong bg-surface px-6 py-3 text-sm font-medium text-text hover:bg-surface-2"
+      >
+        На главную
+      </a>
+      <a
+        href="/#catalog"
+        class="bg-accent px-6 py-3 text-sm font-medium text-bg hover:bg-accent-dim hover:text-text"
+      >
+        В каталог
+      </a>
+    </div>
+  </div>
+</BaseLayout>
