@@ -2,6 +2,8 @@
 import "../styles/global.css";
 import SiteHeader from "../components/SiteHeader.astro";
 import SEO from "../components/SEO.astro";
+import JsonLd from "../components/JsonLd.astro";
+import { getOrganizationSchema } from "../lib/organizationSchema";
 
 interface Props {
   title: string;
@@ -13,6 +15,8 @@ interface Props {
 }
 
 const { title, description, image, url, type, noindex } = Astro.props;
+
+const organizationSchema = getOrganizationSchema(Astro.site!.toString());
 ---
 
 <html lang="ru">
@@ -34,6 +38,7 @@ const { title, description, image, url, type, noindex } = Astro.props;
       type={type}
       noindex={noindex}
     />
+    <JsonLd schema={organizationSchema} />
   </head>
   <body class="bg-bg font-sans text-text">
     <SiteHeader />
