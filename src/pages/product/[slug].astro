@@ -32,7 +32,9 @@ const specEntries = Object.entries(product.specifications);
 
 <BaseLayout
   title={`${product.name} — купить`}
-  description={product.shortDescription}
+  description={`${product.shortDescription} ${priceLabel}.`}
+  image={cover}
+  type="product"
 >
   <div class="mx-auto max-w-6xl px-4 pb-28 pt-8 sm:px-8 sm:pt-10 lg:pb-16">
     <nav aria-label="Хлебные крошки" class="mb-6 flex flex-wrap items-center gap-2 font-mono text-xs text-text-muted">
