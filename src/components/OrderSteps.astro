@@ -1,0 +1,51 @@
+---
+// "How ordering works" — explains that this is a catalog, not a store: order
+// happens over Telegram/WhatsApp/phone, not a cart. Vertical spec-list layout
+// (numbered rail + connector line) so it reads the same on mobile and desktop.
+import TelegramButton from "./TelegramButton.astro";
+
+interface Props {
+  ymPlace: string;
+}
+
+const { ymPlace } = Astro.props;
+
+const steps = [
+  {
+    title: "Выбрали позицию в каталоге",
+    text: "Смотрите каталог, находите нужную деталь — цена и наличие указаны на карточке.",
+  },
+  {
+    title: "Написали в Telegram/WhatsApp или позвонили",
+    text: "Кнопка заказа есть на каждой карточке товара и на странице товара.",
+  },
+  {
+    title: "Согласовали наличие, цену и доставку",
+    text: "Менеджер подтверждает актуальную цену, наличие на складе и условия доставки.",
+  },
+];
+---
+
+<div class="max-w-xl">
+  <div>
+    {
+      steps.map((step, index) => (
+        <div class="relative flex gap-4">
+          <div class="flex flex-col items-center">
+            <span class="font-mono text-sm text-accent">{String(index + 1).padStart(2, "0")}</span>
+            {index < steps.length - 1 && <span class="mt-2 w-px flex-1 bg-line-strong" aria-hidden="true" />}
+          </div>
+          <div class={index < steps.length - 1 ? "pb-8" : ""}>
+            <h3 class="font-display text-base font-medium text-text">{step.title}</h3>
+            <p class="mt-1 text-sm leading-relaxed text-text-muted">{step.text}</p>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="mt-2 flex flex-wrap gap-3">
+    <TelegramButton place={ymPlace} />
+    <slot />
+  </div>
+</div>

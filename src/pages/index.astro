@@ -4,6 +4,7 @@ import ProductCard from "../components/ProductCard.astro";
 import GallerySection from "../components/GallerySection.astro";
 import MapSection from "../components/MapSection.astro";
 import ReviewsSection from "../components/ReviewsSection.astro";
+import OrderSteps from "../components/OrderSteps.astro";
 import Section from "../components/Section.astro";
 import { allProducts } from "../lib/products";
 
@@ -17,7 +18,7 @@ const INITIAL_VISIBLE = 6;
 const PAGE_SIZE = 9;
 const hasMore = allProducts.length > INITIAL_VISIBLE;
 
-const SECTION_COUNT = 4;
+const SECTION_COUNT = 5;
 ---
 
 <BaseLayout
@@ -113,15 +114,19 @@ const SECTION_COUNT = 4;
     }
   </Section>
 
-  <Section id="gallery" title="Наша галерея" index={2} total={SECTION_COUNT} tone="warm" meta="склад и витрина">
+  <Section id="how-to-order" title="Как заказать" index={2} total={SECTION_COUNT} tone="base" meta="каталог-визитка, не магазин">
+    <OrderSteps ymPlace="home_how_to_order" />
+  </Section>
+
+  <Section id="gallery" title="Наша галерея" index={3} total={SECTION_COUNT} tone="warm" meta="склад и витрина">
     <GallerySection />
   </Section>
 
-  <Section id="map" title="Мы на карте" index={3} total={SECTION_COUNT} tone="steel" meta="как добраться">
+  <Section id="map" title="Мы на карте" index={4} total={SECTION_COUNT} tone="steel" meta="как добраться">
     <MapSection />
   </Section>
 
-  <Section id="reviews" title="Отзывы" index={4} total={SECTION_COUNT} tone="moss" meta="яндекс.карты">
+  <Section id="reviews" title="Отзывы" index={5} total={SECTION_COUNT} tone="moss" meta="яндекс.карты">
     <ReviewsSection />
   </Section>
 </BaseLayout>

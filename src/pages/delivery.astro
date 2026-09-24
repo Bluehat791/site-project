@@ -1,6 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { TELEGRAM_URL, PHONE_DISPLAY, PHONE_TEL } from "../lib/contacts";
+import OrderSteps from "../components/OrderSteps.astro";
+import TelegramButton from "../components/TelegramButton.astro";
+import { PHONE_DISPLAY, PHONE_TEL } from "../lib/contacts";
 ---
 
 <BaseLayout
@@ -25,7 +27,9 @@ import { TELEGRAM_URL, PHONE_DISPLAY, PHONE_TEL } from "../lib/contacts";
           подтвердит наличие, цену и сроки по выбранной позиции.
         </p>
       </div>
+    </div>
 
+    <div class="mt-6 space-y-6 text-sm leading-relaxed text-text-muted sm:text-base">
       <div>
         <h2 class="mb-2 font-display text-lg font-medium text-text">Доставка</h2>
         <p>
@@ -45,25 +49,18 @@ import { TELEGRAM_URL, PHONE_DISPLAY, PHONE_TEL } from "../lib/contacts";
       </div>
     </div>
 
-    <div class="mt-10 flex flex-wrap gap-3">
-      <a
-        href={TELEGRAM_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        data-ym-goal="telegram_click"
-        data-ym-place="delivery_page"
-        class="flex items-center gap-2 bg-accent px-5 py-3 text-sm font-medium text-bg"
-      >
-        Написать в Telegram
-      </a>
-      <a
-        href={`tel:${PHONE_TEL}`}
-        data-ym-goal="call_click"
-        data-ym-place="delivery_page"
-        class="flex items-center gap-2 border border-line-strong px-5 py-3 font-mono text-sm text-text hover:text-accent"
-      >
-        {PHONE_DISPLAY}
-      </a>
+    <div class="mt-10 border-t border-line pt-10">
+      <h2 class="mb-6 font-display text-lg font-medium text-text">Как это работает</h2>
+      <OrderSteps ymPlace="delivery_page">
+        <a
+          href={`tel:${PHONE_TEL}`}
+          data-ym-goal="call_click"
+          data-ym-place="delivery_page"
+          class="flex items-center gap-2 border border-line-strong px-5 py-3 font-mono text-sm text-text hover:text-accent"
+        >
+          {PHONE_DISPLAY}
+        </a>
+      </OrderSteps>
     </div>
   </div>
 </BaseLayout>
