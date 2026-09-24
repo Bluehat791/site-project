@@ -35,6 +35,8 @@ const menuLinks = [
 
     <a
       href={`tel:${PHONE_TEL}`}
+      data-ym-goal="call_click"
+      data-ym-place="header"
       class="hidden items-center gap-2 font-mono text-sm text-text hover:text-accent sm:flex"
     >
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -45,6 +47,8 @@ const menuLinks = [
     <a
       href={`tel:${PHONE_TEL}`}
       aria-label="Позвонить"
+      data-ym-goal="call_click"
+      data-ym-place="header_mobile"
       class="flex h-9 w-9 items-center justify-center border border-line-strong text-text sm:hidden"
     >
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -97,6 +101,8 @@ const menuLinks = [
     </div>
     <a
       href={`tel:${PHONE_TEL}`}
+      data-ym-goal="call_click"
+      data-ym-place="menu"
       class="mb-2.5 flex items-center gap-2 font-mono text-sm text-text hover:text-accent"
     >
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -108,6 +114,8 @@ const menuLinks = [
       href={TELEGRAM_URL}
       target="_blank"
       rel="noopener noreferrer"
+      data-ym-goal="telegram_click"
+      data-ym-place="menu"
       class="mb-2.5 flex items-center gap-2 text-sm text-text hover:text-accent"
     >
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -119,6 +127,8 @@ const menuLinks = [
       href={WHATSAPP_URL}
       target="_blank"
       rel="noopener noreferrer"
+      data-ym-goal="whatsapp_click"
+      data-ym-place="menu"
       class="flex items-center gap-2 text-sm text-text hover:text-stock"
     >
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

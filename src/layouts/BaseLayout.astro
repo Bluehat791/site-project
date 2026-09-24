@@ -3,6 +3,7 @@ import "../styles/global.css";
 import SiteHeader from "../components/SiteHeader.astro";
 import SEO from "../components/SEO.astro";
 import JsonLd from "../components/JsonLd.astro";
+import YandexMetrika from "../components/YandexMetrika.astro";
 import { getOrganizationSchema } from "../lib/organizationSchema";
 
 interface Props {
@@ -39,6 +40,7 @@ const organizationSchema = getOrganizationSchema(Astro.site!.toString());
       noindex={noindex}
     />
     <JsonLd schema={organizationSchema} />
+    <YandexMetrika />
   </head>
   <body class="bg-bg font-sans text-text">
     <SiteHeader />

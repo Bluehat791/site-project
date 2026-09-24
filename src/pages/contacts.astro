@@ -52,6 +52,8 @@ const breadcrumbSchema = {
         href={TELEGRAM_URL}
         target="_blank"
         rel="noopener noreferrer"
+        data-ym-goal="telegram_click"
+        data-ym-place="contacts_page"
         class="flex flex-col items-center justify-center gap-2 bg-surface px-4 py-8 text-bg"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="text-accent" aria-hidden="true">
@@ -64,6 +66,8 @@ const breadcrumbSchema = {
         href={WHATSAPP_URL}
         target="_blank"
         rel="noopener noreferrer"
+        data-ym-goal="whatsapp_click"
+        data-ym-place="contacts_page"
         class="flex flex-col items-center justify-center gap-2 bg-surface px-4 py-8"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="text-stock" aria-hidden="true">
@@ -74,6 +78,8 @@ const breadcrumbSchema = {
       </a>
       <a
         href={`tel:${PHONE_TEL}`}
+        data-ym-goal="call_click"
+        data-ym-place="contacts_page"
         class="flex flex-col items-center justify-center gap-2 bg-surface px-4 py-8"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="text-text" aria-hidden="true">

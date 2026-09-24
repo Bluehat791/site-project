@@ -38,12 +38,16 @@ import { TELEGRAM_URL, PHONE_DISPLAY, PHONE_TEL } from "../lib/contacts";
         href={TELEGRAM_URL}
         target="_blank"
         rel="noopener noreferrer"
+        data-ym-goal="telegram_click"
+        data-ym-place="about_page"
         class="flex items-center gap-2 bg-accent px-5 py-3 text-sm font-medium text-bg"
       >
         Написать в Telegram
       </a>
       <a
         href={`tel:${PHONE_TEL}`}
+        data-ym-goal="call_click"
+        data-ym-place="about_page"
         class="flex items-center gap-2 border border-line-strong px-5 py-3 font-mono text-sm text-text hover:text-accent"
       >
         {PHONE_DISPLAY}
