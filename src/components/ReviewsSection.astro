@@ -3,9 +3,46 @@ import ReviewCard from "./ReviewCard.astro";
 import { reviews, REVIEWS_SOURCE_URL } from "../lib/reviews";
 
 const pad = (n: number) => String(n).padStart(2, "0");
+
+const reviewCount = reviews.length;
+const averageRating = reviewCount
+  ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviewCount
+  : 0;
+
+const pluralizeReview = (n: number) => {
+  const mod100 = n % 100;
+  const mod10 = n % 10;
+  if (mod100 >= 11 && mod100 <= 14) return "отзывов";
+  if (mod10 === 1) return "отзыв";
+  if (mod10 >= 2 && mod10 <= 4) return "отзыва";
+  return "отзывов";
+};
 ---
 
 <div>
+  {
+    reviewCount > 0 && (
+      <div class="mb-6 flex items-center gap-2 font-mono text-sm">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          stroke="currentColor"
+          stroke-width="1.5"
+          class="text-sand"
+          aria-hidden="true"
+        >
+          <path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" stroke-linejoin="round" />
+        </svg>
+        <span class="text-accent">{averageRating.toFixed(1)}</span>
+        <span class="text-text-muted">
+          · {reviewCount} {pluralizeReview(reviewCount)} на Яндекс.Картах
+        </span>
+      </div>
+    )
+  }
+
   <div class="relative">
     <div
       data-reviews-track
