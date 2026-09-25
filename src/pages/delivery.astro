@@ -2,7 +2,11 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import OrderSteps from "../components/OrderSteps.astro";
 import TelegramButton from "../components/TelegramButton.astro";
+import FaqAccordion from "../components/FaqAccordion.astro";
+import { faqItems } from "../data/faq";
 import { PHONE_DISPLAY, PHONE_TEL } from "../lib/contacts";
+
+const deliveryFaqItems = faqItems.filter((item) => item.onDeliveryPage);
 ---
 
 <BaseLayout
@@ -61,6 +65,17 @@ import { PHONE_DISPLAY, PHONE_TEL } from "../lib/contacts";
           {PHONE_DISPLAY}
         </a>
       </OrderSteps>
+    </div>
+
+    <div class="mt-10 border-t border-line pt-10">
+      <h2 class="mb-6 font-display text-lg font-medium text-text">Частые вопросы</h2>
+      <FaqAccordion items={deliveryFaqItems} />
+      <a
+        href="/faq"
+        class="mt-4 inline-flex items-center gap-2 font-mono text-sm text-text-muted hover:text-accent"
+      >
+        Все вопросы и ответы →
+      </a>
     </div>
   </div>
 </BaseLayout>

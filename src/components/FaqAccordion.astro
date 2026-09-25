@@ -1,0 +1,43 @@
+---
+// Native <details>/<summary> accordion, no JS. Plus/minus indicator flips to a
+// minus via CSS on [open] — no icon library, no client-side script.
+import type { FaqItem } from "../data/faq";
+
+interface Props {
+  items: FaqItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="divide-y divide-line border border-line">
+  {
+    items.map((item) => (
+      <details class="faq-item group bg-surface px-4 py-1 sm:px-6">
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-display text-base text-text marker:content-none sm:text-[17px]">
+          <span>{item.question}</span>
+          <span
+            class="faq-icon relative h-4 w-4 shrink-0 text-line-strong"
+            aria-hidden="true"
+          >
+            <span class="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-current" />
+            <span class="faq-icon-vertical absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-current" />
+          </span>
+        </summary>
+        <div class="pb-5 pr-8 text-sm leading-relaxed text-text-muted sm:text-base">
+          {item.answer}
+        </div>
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item[open] .faq-icon-vertical {
+    transform: translateX(-50%) scaleY(0);
+  }
+</style>

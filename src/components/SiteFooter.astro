@@ -1,0 +1,65 @@
+---
+import { TELEGRAM_URL, PHONE_DISPLAY, PHONE_TEL } from "../lib/contacts";
+
+const links = [
+  { href: "/", label: "Каталог" },
+  { href: "/about", label: "О нас" },
+  { href: "/delivery", label: "Доставка и оплата" },
+  { href: "/faq", label: "Вопросы и ответы" },
+  { href: "/contacts", label: "Контакты" },
+  { href: "/offer", label: "Публичная оферта" },
+  { href: "/privacy", label: "Политика конфиденциальности" },
+];
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-line bg-surface">
+  <div class="mx-auto max-w-6xl px-4 py-10 sm:px-8">
+    <div class="flex flex-col gap-8 sm:flex-row sm:justify-between">
+      <div>
+        <a href="/" class="font-display text-lg font-semibold text-text">
+          Юггидросоюз
+        </a>
+        <p class="mt-2 max-w-xs text-sm leading-relaxed text-text-muted">
+          Запчасти и гидравлика для грузовой и специальной техники.
+        </p>
+      </div>
+
+      <nav aria-label="Дополнительная навигация" class="flex flex-col gap-2 font-mono text-sm">
+        {
+          links.map((link) => (
+            <a href={link.href} class="text-text-muted hover:text-accent">
+              {link.label}
+            </a>
+          ))
+        }
+      </nav>
+
+      <div class="font-mono text-sm">
+        <a
+          href={`tel:${PHONE_TEL}`}
+          data-ym-goal="call_click"
+          data-ym-place="footer"
+          class="block text-text hover:text-accent"
+        >
+          {PHONE_DISPLAY}
+        </a>
+        <a
+          href={TELEGRAM_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-ym-goal="telegram_click"
+          data-ym-place="footer"
+          class="mt-2 block text-text-muted hover:text-accent"
+        >
+          Telegram @Yugsoyuz
+        </a>
+      </div>
+    </div>
+
+    <div class="mt-8 border-t border-line pt-6 font-mono text-xs text-text-muted">
+      © {year} Юггидросоюз. Каталог-визитка, не интернет-магазин.
+    </div>
+  </div>
+</footer>
