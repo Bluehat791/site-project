@@ -3,11 +3,13 @@ import type { ProductWithUrlSlug } from "../lib/products";
 
 interface Props {
   product: ProductWithUrlSlug;
+  /** Disable the hover/tap photo slider and show only the cover image. */
+  disableSlider?: boolean;
 }
 
-const { product } = Astro.props;
+const { product, disableSlider = false } = Astro.props;
 const cover = product.images[0];
-const hasMultipleImages = product.images.length > 1;
+const hasMultipleImages = !disableSlider && product.images.length > 1;
 ---
 
 <a
