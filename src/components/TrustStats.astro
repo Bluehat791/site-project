@@ -1,0 +1,43 @@
+---
+// Compact trust strip: big mono/accent numbers (the same visual language as
+// spec values and prices), no icons. Deliberately NOT wrapped in <Section> —
+// it's a lighter beat between the banded "sheet" sections on the home page,
+// not another numbered one.
+import type { TrustStat } from "../data/trustStats";
+
+interface Props {
+  stats: TrustStat[];
+}
+
+const { stats } = Astro.props;
+---
+
+<div class="border-y border-line bg-bg">
+  <div class="mx-auto max-w-6xl px-4 py-10 sm:px-8 sm:py-14">
+    <div class="mb-6 flex items-center gap-3 font-mono text-xs uppercase tracking-wide text-text-muted sm:mb-8">
+      <span>В цифрах</span>
+      <span class="h-px flex-1 bg-line" />
+    </div>
+
+    <div class="grid grid-cols-2 gap-px border border-line bg-line sm:grid-cols-4">
+      {
+        stats.map((stat) => (
+          <div
+            class="relative flex flex-col items-start gap-2 bg-surface px-5 py-7 sm:px-6
+              before:pointer-events-none before:absolute before:left-[8px] before:top-[8px] before:h-[8px] before:w-[8px] before:border-l before:border-t before:border-line-strong before:content-['']
+              after:pointer-events-none after:absolute after:bottom-[8px] after:right-[8px] after:h-[8px] after:w-[8px] after:border-b after:border-r after:border-line-strong after:content-['']"
+          >
+            <span
+              class={`font-mono text-4xl font-medium leading-none sm:text-5xl ${stat.todo ? "text-accent/60" : "text-accent"}`}
+            >
+              {stat.value}
+            </span>
+            <span class="font-mono text-[11px] leading-snug text-text-muted sm:text-xs">
+              {stat.caption}
+            </span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>

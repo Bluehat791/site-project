@@ -6,17 +6,22 @@ import MapSection from "../components/MapSection.astro";
 import ReviewsSection from "../components/ReviewsSection.astro";
 import OrderSteps from "../components/OrderSteps.astro";
 import Section from "../components/Section.astro";
+import TrustStats from "../components/TrustStats.astro";
+import TelegramButton from "../components/TelegramButton.astro";
 import { allProducts } from "../lib/products";
-
-// Filter only makes sense once products actually have distinct categories —
-// ProductList.json currently has one placeholder category for everything
-// (see CLAUDE.md "Known data quirks"), so this renders nothing for now.
-const categories = [...new Set(allProducts.map((product) => product.category))];
-const hasCategoryFilter = categories.length > 1;
+import { trustStats } from "../data/trustStats";
 
 const INITIAL_VISIBLE = 6;
 const PAGE_SIZE = 9;
 const hasMore = allProducts.length > INITIAL_VISIBLE;
+
+// Search index built at build time: one lowercased "name + model" string per
+// product, keyed by its position in allProducts (matches data-product-index
+// on the grid items below). Plain substring match, no external libs.
+const searchIndex = allProducts.map((product, index) => ({
+  index,
+  text: `${product.name} ${product.slug}`.toLocaleLowerCase("ru"),
+}));
 
 const SECTION_COUNT = 5;
 ---
@@ -35,33 +40,34 @@ const SECTION_COUNT = 5;
     meta={`позиций · ${allProducts.length}`}
   >
 
-    {
-      hasCategoryFilter && (
-        <div
-          class="mb-8 flex flex-wrap gap-2"
-          data-category-filter
+    <div class="mb-8" data-catalog-search>
+      <div class="relative">
+        <svg
+          class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
         >
-          <button
-            type="button"
-            data-category="all"
-            aria-pressed="true"
-            class="border border-line px-4 py-2 font-mono text-xs text-text-muted aria-pressed:border-line-strong aria-pressed:text-text"
-          >
-            Все
-          </button>
-          {categories.map((category) => (
-            <button
-              type="button"
-              data-category={category}
-              aria-pressed="false"
-              class="border border-line px-4 py-2 font-mono text-xs text-text-muted aria-pressed:border-line-strong aria-pressed:text-text"
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-      )
-    }
+          <circle cx="11" cy="11" r="7" />
+          <path d="M21 21l-4.3-4.3" stroke-linecap="round" />
+        </svg>
+        <input
+          type="search"
+          inputmode="search"
+          data-search-input
+          placeholder="Поиск по названию или модели…"
+          aria-label="Поиск по каталогу"
+          class="w-full border border-line bg-transparent py-3 pl-11 pr-4 font-sans text-sm text-text placeholder:text-text-muted focus:border-accent focus:outline-none"
+        />
+      </div>
+      <div
+        data-search-counter
+        aria-live="polite"
+        class="mt-2 hidden font-mono text-[11px] text-text-muted"
+      ></div>
+    </div>
 
     <div
       class="grid grid-cols-1 gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-3"
@@ -70,7 +76,6 @@ const SECTION_COUNT = 5;
       {
         allProducts.map((product, index) => (
           <div
-            data-category={product.category}
             data-product-index={index}
             class={index >= INITIAL_VISIBLE ? "hidden" : ""}
           >
@@ -78,6 +83,14 @@ const SECTION_COUNT = 5;
           </div>
         ))
       }
+    </div>
+
+    <div class="hidden border border-line bg-surface px-6 py-10 text-center" data-search-empty>
+      <p class="font-display text-lg text-text">Ничего не найдено</p>
+      <p class="mx-auto mt-2 max-w-md text-sm text-text-muted">
+        Возможно, у нас есть аналог — напишите нам, поможем подобрать замену.
+      </p>
+      <TelegramButton place="catalog_search_empty" class="mx-auto mt-5 w-fit" />
     </div>
 
     {
@@ -126,87 +139,94 @@ const SECTION_COUNT = 5;
     <MapSection />
   </Section>
 
+  <TrustStats stats={trustStats} />
+
   <Section id="reviews" title="Отзывы" index={5} total={SECTION_COUNT} tone="moss" meta="яндекс.карты">
     <ReviewsSection />
   </Section>
 </BaseLayout>
 
-{
-  hasMore && (
-    <script>
-      const controls = document.querySelector<HTMLElement>("[data-catalog-controls]");
-      const grid = document.querySelector("[data-product-grid]");
-      const moreBtn = controls?.querySelector<HTMLButtonElement>("[data-show-more]");
-      const collapseBtn = controls?.querySelector<HTMLButtonElement>("[data-collapse]");
-      const counter = controls?.querySelector<HTMLElement>("[data-catalog-counter]");
 
-      if (controls && grid && moreBtn && collapseBtn && counter) {
-        const initial = Number(controls.dataset.initial);
-        const pageSize = Number(controls.dataset.pageSize);
-        const items = grid.querySelectorAll<HTMLElement>("[data-product-index]");
-        const total = items.length;
-        let visible = initial;
+<script define:vars={{ searchIndex, initial: INITIAL_VISIBLE, pageSize: PAGE_SIZE }}>
+  const grid = document.querySelector("[data-product-grid]");
+  const items = grid ? grid.querySelectorAll("[data-product-index]") : [];
+  const total = items.length;
 
-        const render = () => {
-          items.forEach((item, index) => {
-            item.classList.toggle("hidden", index >= visible);
-          });
+  const controls = document.querySelector("[data-catalog-controls]");
+  const moreBtn = controls?.querySelector("[data-show-more]");
+  const collapseBtn = controls?.querySelector("[data-collapse]");
+  const paginationCounter = controls?.querySelector("[data-catalog-counter]");
 
-          const remaining = total - visible;
-          moreBtn.classList.toggle("hidden", remaining <= 0);
-          moreBtn.textContent = `Показать ещё ${Math.min(pageSize, remaining)}`;
-          collapseBtn.classList.toggle("hidden", visible <= initial);
-          counter.textContent = `показано ${Math.min(visible, total)} из ${total}`;
-        };
+  const searchInput = document.querySelector("[data-search-input]");
+  const searchCounter = document.querySelector("[data-search-counter]");
+  const emptyState = document.querySelector("[data-search-empty]");
 
-        moreBtn.addEventListener("click", () => {
-          const firstNew = items[visible];
-          visible = Math.min(visible + pageSize, total);
-          render();
-          // Move focus to the first newly revealed card so keyboard users continue from there.
-          firstNew?.querySelector<HTMLElement>("a")?.focus({ preventScroll: true });
-        });
+  let visible = initial;
 
-        collapseBtn.addEventListener("click", () => {
-          visible = initial;
-          render();
-          // The list may have been very long — jump back to the top of the catalog.
-          document.getElementById("catalog")?.scrollIntoView({ behavior: "smooth" });
-        });
+  const renderPagination = () => {
+    items.forEach((item, index) => {
+      item.classList.toggle("hidden", index >= visible);
+    });
 
-        render();
-      }
-    </script>
-  )
-}
+    if (controls && moreBtn && collapseBtn && paginationCounter) {
+      const remaining = total - visible;
+      moreBtn.classList.toggle("hidden", remaining <= 0);
+      moreBtn.textContent = `Показать ещё ${Math.min(pageSize, remaining)}`;
+      collapseBtn.classList.toggle("hidden", visible <= initial);
+      paginationCounter.textContent = `показано ${Math.min(visible, total)} из ${total}`;
+    }
+  };
 
-{
-  hasCategoryFilter && (
-    <script>
-      const filterBar = document.querySelector("[data-category-filter]");
-      const grid = document.querySelector("[data-product-grid]");
+  const applySearch = (query) => {
+    const q = query.trim().toLocaleLowerCase("ru");
 
-      if (filterBar && grid) {
-        const buttons = filterBar.querySelectorAll("button[data-category]");
-        const items = grid.querySelectorAll<HTMLElement>("[data-category]");
+    if (!q) {
+      controls?.classList.remove("hidden");
+      searchCounter?.classList.add("hidden");
+      emptyState?.classList.add("hidden");
+      grid?.classList.remove("hidden");
+      visible = initial;
+      renderPagination();
+      return;
+    }
 
-        filterBar.addEventListener("click", (event) => {
-          const button = (event.target as HTMLElement).closest(
-            "button[data-category]",
-          );
-          if (!button) return;
+    controls?.classList.add("hidden");
+    const matched = new Set(
+      searchIndex.filter((entry) => entry.text.includes(q)).map((entry) => entry.index),
+    );
 
-          const selected = button.getAttribute("data-category");
-          buttons.forEach((b) =>
-            b.setAttribute("aria-pressed", String(b === button)),
-          );
-          items.forEach((item) => {
-            const match =
-              selected === "all" || item.getAttribute("data-category") === selected;
-            item.style.display = match ? "" : "none";
-          });
-        });
-      }
-    </script>
-  )
-}
+    items.forEach((item, index) => {
+      item.classList.toggle("hidden", !matched.has(index));
+    });
+
+    if (searchCounter) {
+      searchCounter.textContent = `найдено ${matched.size} из ${total}`;
+      searchCounter.classList.remove("hidden");
+    }
+    emptyState?.classList.toggle("hidden", matched.size > 0);
+    grid?.classList.toggle("hidden", matched.size === 0);
+  };
+
+  if (moreBtn && collapseBtn) {
+    moreBtn.addEventListener("click", () => {
+      const firstNew = items[visible];
+      visible = Math.min(visible + pageSize, total);
+      renderPagination();
+      // Move focus to the first newly revealed card so keyboard users continue from there.
+      firstNew?.querySelector("a")?.focus({ preventScroll: true });
+    });
+
+    collapseBtn.addEventListener("click", () => {
+      visible = initial;
+      renderPagination();
+      // The list may have been very long — jump back to the top of the catalog.
+      document.getElementById("catalog")?.scrollIntoView({ behavior: "smooth" });
+    });
+  }
+
+  searchInput?.addEventListener("input", (event) => {
+    applySearch(event.target.value);
+  });
+
+  renderPagination();
+</script>
