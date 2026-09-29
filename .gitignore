@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# review screenshots contain real reviewers' profile photos, keep local-only
+references/review-*.png
